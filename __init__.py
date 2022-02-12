@@ -59,7 +59,20 @@ class ConeBasedDriverCurveMap(curve_mapping.BCLMAP_CurveManager, bpy.types.Prope
 class ConeBasedDriver(bpy.types.PropertyGroup):
     """Manages and stores settings for a cone based corrective shape key"""
 
+    def get_bone_target(self) -> str:
+        fcurve = driver_find(self.id_data, self.data_path)
+        if fcurve is not None:
+            variables = fcurve.driver.variables
+            if len(variables) > 1:
+                return variables[1].targets[0].bone_target
+        return ""
+
     def update(self, context: typing.Optional[bpy.types.Context]=None) -> None:
+
+        if isinstance(context, str):
+            bone_target = context
+        else:
+            bone_target = self.get_bone_target()
 
         fcurve = driver_ensure(self.id_data, self.data_path)
         points = to_bezier(self.falloff.curve.points,
@@ -89,7 +102,7 @@ class ConeBasedDriver(bpy.types.PropertyGroup):
 
             target = variable.targets[0]
             target.id = self.object
-            target.bone_target = self.bone_target
+            target.bone_target = bone_target
             target.transform_type = f'ROT_{axis}'
             target.transform_space = 'LOCAL_SPACE'
             target.rotation_mode = 'QUATERNION'
@@ -105,8 +118,8 @@ class ConeBasedDriver(bpy.types.PropertyGroup):
     bone_target: bpy.props.StringProperty(
         name="Bone",
         description="The bone to read rotations from",
-        default="",
-        update=update,
+        get=get_bone_target,
+        set=update,
         options=set()
         )
 
@@ -127,13 +140,6 @@ class ConeBasedDriver(bpy.types.PropertyGroup):
         get=lambda self: self.get("identifier", ""),
         options={'HIDDEN'}
         )
-
-    @property
-    def is_valid(self) -> bool:
-        return (self.name in self.id_data.key_blocks
-                and self.object is not None
-                and self.object.type == 'ARMATURE'
-                and self.bone_target in self.object.data.bones)
 
     mute: bpy.props.BoolProperty(
         name="Mute",
