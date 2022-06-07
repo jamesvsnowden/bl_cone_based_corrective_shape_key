@@ -1,9 +1,12 @@
 [submodule "lib/curve_mapping"]
-	path = lib/curve_mapping
+	path = cone_based_shape_key_driver/lib/curve_mapping
 	url = https://github.com/jamesvsnowden/bl_curve_mapping.git
 [submodule "lib/driver_utils"]
-	path = lib/driver_utils
+	path = cone_based_shape_key_driver/lib/driver_utils
 	url = https://github.com/jamesvsnowden/bl_driver_utils.git
 [submodule "lib/transform_utils"]
-	path = lib/transform_utils
+	path = cone_based_shape_key_driver/lib/transform_utils
 	url = https://github.com/jamesvsnowden/bl_transform_utils.git
+[submodule "cone_based_shape_key_driver/lib/update"]
+	path = cone_based_shape_key_driver/lib/update
+	url = https://github.com/jamesvsnowden/bl_addon_update_strategy.git
